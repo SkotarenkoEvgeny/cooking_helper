@@ -13,8 +13,21 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     username = db.Column(db.String())
-    password = db.Column(db.String())
+    email = db.Column(db.String())
+    password_hash = db.Column(db.String())
     recipe = db.relationship("Recipe")
+
+    @property
+    def password(self):
+        print('hash from bd', self.password_hash)
+        raise AttributeError("Вам не нужно знать пароль!")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def password_valid(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Ingredient_Group(db.Model):
