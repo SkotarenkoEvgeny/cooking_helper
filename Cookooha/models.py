@@ -8,6 +8,11 @@ ingredients_recipes_association = db.Table(
     db.Column("ingredient_id", db.Integer, db.ForeignKey("ingredients.id")),
     db.Column("recipe_id", db.Integer, db.ForeignKey("recipes.id")))
 
+users_recipes_association = db.Table(
+    "users_recipes",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+    db.Column("recipe_id", db.Integer, db.ForeignKey("recipes.id")))
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -15,7 +20,7 @@ class User(db.Model):
     username = db.Column(db.String())
     email = db.Column(db.String())
     password_hash = db.Column(db.String())
-    recipe = db.relationship("Recipe")
+    recipe = db.relationship("Recipe", secondary=users_recipes_association, back_populates="user")
 
     @property
     def password(self):
@@ -56,4 +61,4 @@ class Recipe(db.Model):
     instruction = db.Column(db.String())
     ingredient = db.relationship("Ingredient", secondary=ingredients_recipes_association, back_populates="recipe")
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    user = db.relationship("User")
+    user = db.relationship("User", secondary=users_recipes_association, back_populates="recipe")

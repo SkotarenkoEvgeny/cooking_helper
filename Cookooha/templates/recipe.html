@@ -4,7 +4,7 @@
 
     <section class="mx-auto pt-5 pb-3" style="width: 85%;">
       <div class="col-10 offset-1 text-center">
-        <h1 class="h1 font-weight-bold pb-4">{{ recipe.title }}  <br>с вермишелью</h1>
+        <h1 class="h1 font-weight-bold pb-4">{{ recipe.title }}</h1>
         <div class="row">
           <div class="col">
             <span class="btn btn-outline-secondary rounded-pill px-4">{{ recipe.servings }} порций по {{ recipe.kcal}} ККал</span>
@@ -13,7 +13,8 @@
             <span class="btn btn-outline-secondary rounded-pill px-4">{{ recipe.time }} мин</span>
           </div>
           <div class="col">
-            <a href="#" class="btn btn-outline-danger rounded-pill px-4">Добавить в избранное</a>
+            <a href="/favorites_add/{{ recipe.id }}" class="btn btn-outline-danger rounded-pill px-4">Добавить в
+              избранное</a>
           </div>
         </div>
         <h2 class="h5 py-5 px-5 font-weight-normal" style="line-height: 1.5;">{{ recipe.description }}</h2>
@@ -82,17 +83,7 @@
         </div>
         <div class="col-7 pr-5">
           <h3 class="h5 pb-3"><b>Рецепт</b></h3>
-          <p>Куриное филе вымойте, обсушите, срежьте с филе пленки и нарежьте его крупно.</p>
-          <p>Выложите курицу в кастрюлю, залейте холодной водой, добавьте лавровые листья. Доведите до кипения и снимите пену. Варите куриное филе около 15 минут, после чего выложите кусочки филе на тарелку.</p>
-          <p>Морковь натрите на крупной терке.</p>
-          <p>Лук нарежьте мелкими кубиками.</p>
-          <p>Разогрейте на сковороде растительное масло и обжарьте на нем нарезанный лук примерно 2-3 минуты.</p>
-          <p>Добавьте к луку натертую морковь, перемешайте и обжаривайте лук и морковь еще 2 минуты.</p>
-          <p>Картофель нарежьте средними кубиками или брусочками. Куриное филе нарежьте кусочками.</p>
-          <p>Добавьте в кастрюлю с бульоном картофель и варите примерно 10 минут.</p>
-          <p>После этого добавьте приготовленную зажарку.</p>
-          <p>Всыпьте в суп с курицей вермишель, аккуратно перемешайте, добавив соль и перец по вкусу.</p>
-          <p>Варите куриный суп с вермишелью 5-7 минут. По желанию можно добавить в суп промытую измельченную зелень петрушки.</p>
+          {{ recipe.instruction }}
         </div>
       </div>
 

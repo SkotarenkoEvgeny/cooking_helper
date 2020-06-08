@@ -1,8 +1,8 @@
 import random
 
-from flask import Flask, render_template, abort, session, redirect, request
+from flask import Flask, render_template, session, redirect, request
 from models import User, Ingredient, Ingredient_Group, Recipe, db
-from forms import RegistrationForm
+from forms import RegistrationForm, RemoveRecipe
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -16,7 +16,6 @@ db.init_app(app)
 @app.route('/')
 def home():
     user = User.query.get(session.get('user_id', None))
-    print(session)
     random_recipe_list = random.sample(Recipe.query.all(), 6)
     return render_template('index.html', random_recipe_list=random_recipe_list, user=user)
 
@@ -26,11 +25,45 @@ def recipes():
     return render_template('recipes.html')
 
 
+@app.route('/favorites_add/<int:recipe_id>/')
+def favorites_worker(recipe_id):
+    if session.get("user_id"):
+        user = User.query.get(session.get("user_id"))
+        recipe = Recipe.query.get(recipe_id)
+        user.recipe.append(recipe)
+        session['recipe_condition'] = 'add'
+        db.session.add(user)
+        db.session.commit()
+        return redirect('/favorites/')
+    return redirect('/registration/')
+
+
+@app.route('/favorites/')
+def favorites():
+    if session.get("user_id"):
+        user = User.query.get(session.get("user_id"))
+        form = RemoveRecipe()
+        recipe_condition = session.get('recipe_condition', None)
+        return render_template('fav.html', fav_recipes=user.recipe, form=form, recipe_condition=recipe_condition)
+
+
+@app.route('/favorites_remove/', methods=["POST"])
+def removefavorires():
+    form = RemoveRecipe(request.form)
+    recipe_id = int(form.recipe.data)
+    if session.get("user_id"):
+        user = User.query.get(session.get("user_id"))
+        recipe = Recipe.query.get(recipe_id)
+        user.recipe.delete(recipe)
+        session['recipe_condition'] = 'del'
+        db.session.add(user)
+        db.session.commit()
+        return redirect('/favorites/')
+
+
 @app.route('/recipe/<int:recipe_id>/')
 def recipe(recipe_id):
-    recipe_unit = Recipe.query.get(recipe_id)
-    if recipe_unit is None:
-        abort(404)
+    recipe_unit = Recipe.query.first_or_404(recipe_id)
     return render_template('recipe.html', recipe=recipe_unit)
 
 

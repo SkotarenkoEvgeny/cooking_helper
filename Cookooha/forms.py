@@ -1,15 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, BooleanField, StringField, PasswordField, validators
-
-
-
-def password_check(form, field):
-    pass
-
-
-class LoginForm(FlaskForm):
-    pass
-
+from wtforms import SubmitField, BooleanField, StringField, PasswordField, validators, HiddenField
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя', [validators.DataRequired()])
@@ -17,5 +7,8 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', [validators.DataRequired()])
 
 
-class ChangePasswordForm(FlaskForm):
-    pass
+class RemoveRecipe(FlaskForm):
+    """
+    remove recipe from favorite list
+    """
+    recipe = HiddenField()
