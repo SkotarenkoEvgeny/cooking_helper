@@ -24,12 +24,13 @@
         {% for recipe in fav_recipes %}
         <!-- Рецепт -->
         <div class="recipe border-top">
-          <form action="/favorites_remove/" class="recipe-wrap py-4 px-5">
-            {{ form.recipe = recipe.id }}
+          <form action="/favorites_remove/" method="POST" class="recipe-wrap py-4 px-5">
+            {{ form.recipe(value = recipe.id) }}
             {{ form.csrf_token }}
-            <button type="button" class="close" aria-label="Close">
+            <button type="submit" class="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
+
             <div class="row">
               <div class="col-2">
                 <img src="../{{ recipe.picture }}" class="img-fluid" alt="" width="152">

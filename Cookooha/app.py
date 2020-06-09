@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask, render_template, session, redirect, request
+from flask import Flask, render_template, session, redirect, request, abort
 from models import User, Ingredient, Ingredient_Group, Recipe, db
 from forms import RegistrationForm, RemoveRecipe
 
@@ -22,7 +22,8 @@ def home():
 
 @app.route('/recipes/')
 def recipes():
-    return render_template('recipes.html')
+    user = User.query.get(session.get('user_id', None))
+    return render_template('recipes.html', user=user)
 
 
 @app.route('/favorites_add/<int:recipe_id>/')
@@ -44,17 +45,20 @@ def favorites():
         user = User.query.get(session.get("user_id"))
         form = RemoveRecipe()
         recipe_condition = session.get('recipe_condition', None)
-        return render_template('fav.html', fav_recipes=user.recipe, form=form, recipe_condition=recipe_condition)
+        if recipe_condition is not None:
+            session['recipe_condition'] = None
+        return render_template('fav.html', fav_recipes=user.recipe, form=form, recipe_condition=recipe_condition,
+                               user=user)
 
 
 @app.route('/favorites_remove/', methods=["POST"])
-def removefavorires():
+def remove_favorites():
     form = RemoveRecipe(request.form)
     recipe_id = int(form.recipe.data)
     if session.get("user_id"):
         user = User.query.get(session.get("user_id"))
         recipe = Recipe.query.get(recipe_id)
-        user.recipe.delete(recipe)
+        user.recipe.remove(recipe)
         session['recipe_condition'] = 'del'
         db.session.add(user)
         db.session.commit()
@@ -63,8 +67,11 @@ def removefavorires():
 
 @app.route('/recipe/<int:recipe_id>/')
 def recipe(recipe_id):
-    recipe_unit = Recipe.query.first_or_404(recipe_id)
-    return render_template('recipe.html', recipe=recipe_unit)
+    recipe_unit = Recipe.query.get(recipe_id)
+    user = User.query.get(session.get('user_id', None))
+    if recipe_unit is None:
+        abort(404)
+    return render_template('recipe.html', recipe=recipe_unit, user=user)
 
 
 @app.route('/registration/', methods=["GET", "POST"])
