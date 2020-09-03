@@ -2,7 +2,7 @@ import random
 
 from flask import Flask, render_template, session, redirect, request, abort
 from models import User, Ingredient, Ingredient_Group, Recipe, db
-from forms import RegistrationForm, RemoveRecipe
+from forms import RegistrationForm, RemoveRecipeForm, ProductForm
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -43,7 +43,7 @@ def favorites_worker(recipe_id):
 def favorites():
     if session.get("user_id"):
         user = User.query.get(session.get("user_id"))
-        form = RemoveRecipe()
+        form = RemoveRecipeForm()
         recipe_condition = session.get('recipe_condition', None)
         if recipe_condition is not None:
             session['recipe_condition'] = None
@@ -53,7 +53,7 @@ def favorites():
 
 @app.route('/favorites_remove/', methods=["POST"])
 def remove_favorites():
-    form = RemoveRecipe(request.form)
+    form = RemoveRecipeForm(request.form)
     recipe_id = int(form.recipe.data)
     if session.get("user_id"):
         user = User.query.get(session.get("user_id"))
@@ -106,6 +106,26 @@ def registration():
 def logout():
     session.pop("user_id")
     return redirect('/')
+
+
+@app.route('/list/')
+def list():
+    rez_dict = {}
+    for item in Ingredient_Group.query.all():
+        product_list = ProductForm(Ingredient.query.filter(Ingredient.ingredient_group == item.id).all())
+
+        print([i.title for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
+        print(product_list.__dict__)
+        rez_dict[item.title] = product_list
+
+    # for item in Ingredient_Group.query.all():
+    #     product_list = [ProductForm(name=i.title, id=i.id) for i in
+    #                     Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()]
+    #     print([i.title for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
+    #     print([i.product.name for i in product_list][0])
+    #     rez_dict[item.title] = product_list
+    # print(rez_dict)
+    return render_template('list.html', rez_dict=rez_dict)
 
 
 if __name__ == "__main__":

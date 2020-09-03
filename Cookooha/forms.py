@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, BooleanField, StringField, PasswordField, validators, HiddenField
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, HiddenField, FieldList, FormField
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя', [validators.DataRequired()])
@@ -7,8 +8,15 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', [validators.DataRequired()])
 
 
-class RemoveRecipe(FlaskForm):
+class RemoveRecipeForm(FlaskForm):
     """
     remove recipe from favorite list
     """
     recipe = HiddenField()
+
+
+class ProductForm(Form):
+    pass
+
+# class ProductListForm(FlaskForm):
+#     product_list = FieldList(FormField(ProductForm), min_entries=1)
