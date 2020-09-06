@@ -20,13 +20,10 @@
         <form action="/" class="px-3 pt-2">
 
             <div class="row mx-auto pt-5 mb-5 border-top">
-                {% for product_group, products in rez_dict.items() %}
+                {% for product_group, products in products %}
                 <div class="col-4">
                     <p><b>{{product_group}}</b></p>
-                    {% for item in products %}
-                    {{item}}
-
-                    {% endfor %}
+                    <p>{{products}}</p>
                 </div>
                 {% endfor %}
 

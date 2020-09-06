@@ -2,7 +2,7 @@ import random
 
 from flask import Flask, render_template, session, redirect, request, abort
 from models import User, Ingredient, Ingredient_Group, Recipe, db
-from forms import RegistrationForm, RemoveRecipeForm, ProductForm
+from forms import RegistrationForm, RemoveRecipeForm, RadioField, ProductForm
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -109,23 +109,15 @@ def logout():
 
 
 @app.route('/list/')
-def list():
+def ingredient_list():
     rez_dict = {}
     for item in Ingredient_Group.query.all():
-        product_list = ProductForm(Ingredient.query.filter(Ingredient.ingredient_group == item.id).all())
-
-        print([i.title for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
-        print(product_list.__dict__)
-        rez_dict[item.title] = product_list
-
-    # for item in Ingredient_Group.query.all():
-    #     product_list = [ProductForm(name=i.title, id=i.id) for i in
-    #                     Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()]
-    #     print([i.title for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
-    #     print([i.product.name for i in product_list][0])
-    #     rez_dict[item.title] = product_list
-    # print(rez_dict)
-    return render_template('list.html', rez_dict=rez_dict)
+        field = RadioField(item.title, choices=[(str(i.id), i.title) for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
+        setattr(ProductForm, str(item.id), field)
+        print(ProductForm.__dict__)
+        rez_dict[item.title] = ProductForm()
+    print(rez_dict)
+    return render_template('list.html', products=rez_dict)
 
 
 if __name__ == "__main__":
