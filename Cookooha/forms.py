@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, RadioField, StringField, PasswordField, validators, HiddenField, FieldList, FormField
+from wtforms import Form, RadioField, StringField, PasswordField, validators, HiddenField, FieldList, FormField, RadioField
 from models import Ingredient
 
 class RegistrationForm(FlaskForm):
@@ -15,8 +15,12 @@ class RemoveRecipeForm(FlaskForm):
     recipe = HiddenField()
 
 
+class IngredientgoupForm(FlaskForm):
+    ingredient = RadioField()
+
+
 class ProductForm(FlaskForm):
-    pass
+    ingrediets_group = FieldList(FormField(IngredientgoupForm))
 
 
 

@@ -2,7 +2,7 @@ import random
 
 from flask import Flask, render_template, session, redirect, request, abort
 from models import User, Ingredient, Ingredient_Group, Recipe, db
-from forms import RegistrationForm, RemoveRecipeForm, RadioField, ProductForm
+from forms import RegistrationForm, RemoveRecipeForm, RadioField, ProductForm, IngredientgoupForm
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -110,14 +110,14 @@ def logout():
 
 @app.route('/list/')
 def ingredient_list():
-    rez_dict = {}
+    form = ProductForm()
     for item in Ingredient_Group.query.all():
-        field = RadioField(item.title, choices=[(str(i.id), i.title) for i in Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()])
-        setattr(ProductForm, str(item.id), field)
-        print(ProductForm.__dict__)
-        rez_dict[item.title] = ProductForm()
-    print(rez_dict)
-    return render_template('list.html', products=rez_dict)
+        ingridiets = Ingredient.query.filter(Ingredient.ingredient_group == item.id).all()
+        ingridietgroupform = IngredientgoupForm()
+        ingridietgroupform.ingredient.choices = [(1, 1)]
+        form.ingrediets_group.append_entry(ingridietgroupform)
+
+    return render_template('list.html', form=form)
 
 
 if __name__ == "__main__":
